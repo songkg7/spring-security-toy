@@ -1,5 +1,7 @@
 package com.toy.springsecuritycore.security.config;
 
+import static com.toy.springsecuritycore.enums.Role.*;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -34,9 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/mypage").hasRole("USER")
-                .antMatchers("/messages").hasRole("MANAGER")
-                .antMatchers("/config").hasRole("ADMIN")
+                .antMatchers("/mypage").hasRole(USER.getRole())
+                .antMatchers("/messages").hasRole(MANAGER.getRole())
+                .antMatchers("/config").hasRole(ADMIN.getRole())
                 .anyRequest().authenticated()
 
                 .and()
