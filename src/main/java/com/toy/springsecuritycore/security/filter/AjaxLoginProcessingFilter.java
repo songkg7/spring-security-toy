@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toy.springsecuritycore.domain.AccountDto;
 import com.toy.springsecuritycore.security.token.AjaxAuthenticationToken;
 import java.io.IOException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -23,7 +22,7 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException, IOException, ServletException {
+            throws AuthenticationException, IOException {
 
         if (isAjax(request)) {
             throw new IllegalStateException("Authentication is not Supported!!");
@@ -41,10 +40,7 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
     }
 
     private boolean isAjax(HttpServletRequest request) {
-        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            return true;
-        }
-        return false;
+        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
 
 }
