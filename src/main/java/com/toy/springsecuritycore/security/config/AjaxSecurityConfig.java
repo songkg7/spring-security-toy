@@ -1,6 +1,8 @@
 package com.toy.springsecuritycore.security.config;
 
+import com.toy.springsecuritycore.security.common.AjaxLoginAuthenticationEntryPoint;
 import com.toy.springsecuritycore.security.filter.AjaxLoginProcessingFilter;
+import com.toy.springsecuritycore.security.handler.AjaxAccessDeniedHandler;
 import com.toy.springsecuritycore.security.handler.AjaxAuthenticationFailureHandler;
 import com.toy.springsecuritycore.security.handler.AjaxAuthenticationSuccessHandler;
 import com.toy.springsecuritycore.security.provider.AjaxAuthenticationProvider;
@@ -21,6 +23,8 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AjaxAuthenticationProvider authenticationProvider;
     private final AjaxAuthenticationSuccessHandler authenticationSuccessHandler;
     private final AjaxAuthenticationFailureHandler authenticationFailureHandler;
+    private final AjaxLoginAuthenticationEntryPoint authenticationEntryPoint;
+    private final AjaxAccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -32,10 +36,16 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .antMatcher("/api/**")
                 .authorizeRequests()
+                .antMatchers("/api/messages").hasRole("MANAGER")
                 .anyRequest().authenticated()
 
                 .and()
                 .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler);
 
         http.csrf().disable();
     }
