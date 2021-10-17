@@ -1,16 +1,24 @@
 package com.toy.springsecuritycore.domain;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.ToString.Exclude;
 import org.hibernate.Hibernate;
 
 @Entity
@@ -19,7 +27,7 @@ import org.hibernate.Hibernate;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Account {
+public class Account implements Serializable {
 
     @Id
     @GeneratedValue
@@ -28,7 +36,13 @@ public class Account {
     private String password;
     private String email;
     private int age;
-    private String role;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "account_roles", joinColumns = {
+            @JoinColumn(name = "account_id")}, inverseJoinColumns = {
+            @JoinColumn(name = "role_id")})
+    @Exclude
+    private Set<Role> role = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
@@ -45,14 +59,6 @@ public class Account {
     @Override
     public int hashCode() {
         return 0;
-    }
-
-    public static Account create() {
-        return new Account();
-    }
-
-    public Account withPassword(String password) {
-        return new Account(this.id, this.username, password, this.email, this.age, this.role);
     }
 
 }

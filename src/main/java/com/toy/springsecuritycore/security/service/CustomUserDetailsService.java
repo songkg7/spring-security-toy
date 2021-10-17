@@ -4,6 +4,7 @@ import com.toy.springsecuritycore.domain.Account;
 import com.toy.springsecuritycore.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,7 +29,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(account.getRole()));
+        roles.add(new SimpleGrantedAuthority(
+                account.getRole().stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining(","))));
 
         return new AccountContext(account, roles);
     }

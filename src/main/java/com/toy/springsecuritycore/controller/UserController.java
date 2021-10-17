@@ -28,11 +28,11 @@ public class UserController {
         return "user/login/register";
     }
 
-    @PostMapping("/users")
-    public String createUser(AccountDto accountDto) {
-        Account account = modelMapper.map(accountDto, Account.class);
-        account = account.withPassword(passwordEncoder.encode(accountDto.getPassword()));
-        userService.createUser(account);
-        return "redirect:/";
-    }
+//    @PostMapping("/users")
+//    public String createUser(AccountDto accountDto) {
+//        Account account = modelMapper.map(accountDto, Account.class);
+//        account = account.withPassword(passwordEncoder.encode(accountDto.getPassword()));
+//        userService.createUser(account);
+//        return "redirect:/";
+//    }
 }
