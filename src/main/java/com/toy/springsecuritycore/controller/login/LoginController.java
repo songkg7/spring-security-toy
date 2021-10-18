@@ -1,6 +1,6 @@
 package com.toy.springsecuritycore.controller.login;
 
-import com.toy.springsecuritycore.domain.Account;
+import com.toy.springsecuritycore.domain.entity.Account;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;

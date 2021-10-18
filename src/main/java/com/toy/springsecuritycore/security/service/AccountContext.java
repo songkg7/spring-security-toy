@@ -1,6 +1,6 @@
 package com.toy.springsecuritycore.security.service;
 
-import com.toy.springsecuritycore.domain.Account;
+import com.toy.springsecuritycore.domain.entity.Account;
 import java.util.Collection;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

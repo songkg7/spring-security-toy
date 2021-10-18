@@ -1,8 +1,8 @@
 package com.toy.springsecuritycore.security.service;
 
-import com.toy.springsecuritycore.domain.Account;
+import com.toy.springsecuritycore.domain.entity.Account;
+import com.toy.springsecuritycore.domain.entity.Role;
 import com.toy.springsecuritycore.repository.UserRepository;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +22,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Account account = userRepository.findByUsername(username);
+        Account account = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("UsernameNotFoundException"));
 
-        if (account == null) {
-            throw new UsernameNotFoundException("UsernameNotFoundException");
-        }
-
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(
-                account.getRole().stream()
-                        .map(Object::toString)
-                        .collect(Collectors.joining(","))));
+        List<GrantedAuthority> roles = account.getUserRoles()
+                .stream()
+                .map(Role::getRoleName)
+                .collect(Collectors.toSet())
+                .stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
 
         return new AccountContext(account, roles);
     }

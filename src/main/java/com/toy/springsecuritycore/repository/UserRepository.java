@@ -1,10 +1,13 @@
 package com.toy.springsecuritycore.repository;
 
-import com.toy.springsecuritycore.domain.Account;
+import com.toy.springsecuritycore.domain.entity.Account;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<Account, Long> {
 
-    Account findByUsername(String username);
+    Optional<Account> findByUsername(String username);
+
+    int countByUsername(String username);
 
 }

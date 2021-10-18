@@ -1,7 +1,7 @@
 package com.toy.springsecuritycore.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.toy.springsecuritycore.domain.Account;
+import com.toy.springsecuritycore.domain.entity.Account;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

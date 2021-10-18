@@ -1,10 +1,8 @@
-package com.toy.springsecuritycore.domain;
+package com.toy.springsecuritycore.domain.entity;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,24 +23,28 @@ import org.hibernate.Hibernate;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Account implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Resources {
 
     @Id
     @GeneratedValue
     private Long id;
-    private String username;
-    private String password;
-    private String email;
-    private int age;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "account_roles", joinColumns = {
-            @JoinColumn(name = "account_id")}, inverseJoinColumns = {
-            @JoinColumn(name = "role_id")})
+    private String httpMethod;
+
+    private int orderNum;
+
+    private String resourceName;
+
+    private String resourceType;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "role_resources", joinColumns = {
+            @JoinColumn(name = "resource_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
     @Exclude
-    private Set<Role> role = new HashSet<>();
+    private Set<Role> roleSet = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
@@ -52,8 +54,8 @@ public class Account implements Serializable {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
-        Account account = (Account) o;
-        return id != null && Objects.equals(id, account.id);
+        Resources resources = (Resources) o;
+        return id != null && Objects.equals(id, resources.id);
     }
 
     @Override

@@ -1,14 +1,11 @@
-package com.toy.springsecuritycore.controller;
+package com.toy.springsecuritycore.controller.user;
 
-import com.toy.springsecuritycore.domain.Account;
-import com.toy.springsecuritycore.domain.AccountDto;
 import com.toy.springsecuritycore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 @RequiredArgsConstructor
