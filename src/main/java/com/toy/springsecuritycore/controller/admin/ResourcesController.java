@@ -4,6 +4,7 @@ import com.toy.springsecuritycore.domain.dto.ResourcesDto;
 import com.toy.springsecuritycore.domain.entity.Resources;
 import com.toy.springsecuritycore.domain.entity.Role;
 import com.toy.springsecuritycore.repository.RoleRepository;
+import com.toy.springsecuritycore.security.metadatasource.UrlFilterInvocationSecurityMetadataSource;
 import com.toy.springsecuritycore.service.ResourcesService;
 import com.toy.springsecuritycore.service.RoleService;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ public class ResourcesController {
     private final RoleRepository roleRepository;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
+    private final UrlFilterInvocationSecurityMetadataSource filterInvocationSecurityMetadataSource;
 
     @GetMapping
     public String selectResources(Model model) {
@@ -44,6 +46,7 @@ public class ResourcesController {
         resources.setRoleSet(roles);
 
         resourcesService.insertResources(resources);
+        filterInvocationSecurityMetadataSource.reload();
         return "redirect:/admin/resources";
     }
 
@@ -77,6 +80,7 @@ public class ResourcesController {
     @GetMapping(value="/delete/{id}")
     public String removeResources(@PathVariable String id) {
         resourcesService.deleteResources(Long.parseLong(id));
+        filterInvocationSecurityMetadataSource.reload();
         return "redirect:/admin/resources";
     }
 }

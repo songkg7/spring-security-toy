@@ -115,9 +115,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource()
-            throws Exception {
-        return new UrlFilterInvocationSecurityMetadataSource(urlResourcesMapFactoryBean().getObject());
+    public FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
+        return new UrlFilterInvocationSecurityMetadataSource(urlResourcesMapFactoryBean().getObject(), securityResourceService);
     }
 
     @Bean

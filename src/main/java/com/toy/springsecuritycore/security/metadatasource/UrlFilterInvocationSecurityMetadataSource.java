@@ -1,7 +1,9 @@
 package com.toy.springsecuritycore.security.metadatasource;
 
+import com.toy.springsecuritycore.service.SecurityResourceService;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -15,10 +17,13 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap;
+    private final SecurityResourceService securityResourceService;
 
     public UrlFilterInvocationSecurityMetadataSource(
-            LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resourcesMap) {
+            LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resourcesMap,
+            SecurityResourceService securityResourceService) {
         this.requestMap = resourcesMap;
+        this.securityResourceService = securityResourceService;
     }
 
     @Override
@@ -48,6 +53,18 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     @Override
     public boolean supports(Class<?> clazz) {
         return FilterInvocation.class.isAssignableFrom(clazz);
+    }
+
+    public void reload() {
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = securityResourceService.getResourceList();
+        Iterator<Entry<RequestMatcher, List<ConfigAttribute>>> iterator = reloadedMap.entrySet().iterator();
+
+        requestMap.clear();
+
+        while (iterator.hasNext()) {
+            Entry<RequestMatcher, List<ConfigAttribute>> entry = iterator.next();
+            requestMap.put(entry.getKey(), entry.getValue());
+        }
     }
 
 }
