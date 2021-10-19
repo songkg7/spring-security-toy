@@ -4,15 +4,23 @@ import static com.toy.springsecuritycore.enums.Role.ADMIN;
 import static com.toy.springsecuritycore.enums.Role.MANAGER;
 import static com.toy.springsecuritycore.enums.Role.USER;
 
+import com.toy.springsecuritycore.security.factory.UrlResourcesMapFactoryBean;
 import com.toy.springsecuritycore.security.handler.FormAccessDeniedHandler;
 import com.toy.springsecuritycore.security.handler.FormAuthenticationFailureHandler;
 import com.toy.springsecuritycore.security.handler.FormAuthenticationSuccessHandler;
+import com.toy.springsecuritycore.security.metadatasource.UrlFilterInvocationSecurityMetadataSource;
 import com.toy.springsecuritycore.security.provider.FormAuthenticationProvider;
+import com.toy.springsecuritycore.service.SecurityResourceService;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,6 +29,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 @Order(1)
@@ -32,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
     private final FormAuthenticationSuccessHandler authenticationSuccessHandler;
     private final FormAuthenticationFailureHandler authenticationFailureHandler;
+    private final SecurityResourceService securityResourceService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -65,7 +76,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler());
+                .accessDeniedHandler(accessDeniedHandler())
+
+                .and()
+                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class);
 
     }
 
@@ -81,5 +95,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return accessDeniedHandler;
     }
 
+    @Bean
+    public FilterSecurityInterceptor customFilterSecurityInterceptor() throws Exception {
+        FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
+        filterSecurityInterceptor.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
+        filterSecurityInterceptor.setAccessDecisionManager(affirmativeBased());
+        filterSecurityInterceptor.setAuthenticationManager(authenticationManagerBean());
+        return filterSecurityInterceptor;
+    }
+
+    @Bean
+    public AccessDecisionManager affirmativeBased() {
+        return new AffirmativeBased(accessDecisionVoters());
+
+    }
+
+    private List<AccessDecisionVoter<?>> accessDecisionVoters() {
+        return List.of(new RoleVoter());
+    }
+
+    @Bean
+    public FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource()
+            throws Exception {
+        return new UrlFilterInvocationSecurityMetadataSource(urlResourcesMapFactoryBean().getObject());
+    }
+
+    @Bean
+    public UrlResourcesMapFactoryBean urlResourcesMapFactoryBean() {
+        return new UrlResourcesMapFactoryBean(securityResourceService);
+    }
 
 }
