@@ -11,6 +11,7 @@ import com.toy.springsecuritycore.security.handler.FormAuthenticationFailureHand
 import com.toy.springsecuritycore.security.handler.FormAuthenticationSuccessHandler;
 import com.toy.springsecuritycore.security.metadatasource.UrlFilterInvocationSecurityMetadataSource;
 import com.toy.springsecuritycore.security.provider.FormAuthenticationProvider;
+import com.toy.springsecuritycore.security.voter.IpAddressVoter;
 import com.toy.springsecuritycore.service.SecurityResourceService;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +117,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private List<AccessDecisionVoter<?>> accessDecisionVoters() {
         List<AccessDecisionVoter<?>> accessDecisionVoters = new ArrayList<>();
+        accessDecisionVoters.add(new IpAddressVoter(securityResourceService));
         accessDecisionVoters.add(roleVoter());
         return accessDecisionVoters;
     }
